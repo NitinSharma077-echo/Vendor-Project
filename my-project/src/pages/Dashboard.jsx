@@ -16,10 +16,10 @@ export default function Dashboard() {
                     { label: 'Compared Tools', value: '67', icon: <Users /> },
                     { label: 'Profile Views', value: '1.2k', icon: <Users /> },
                 ].map((stat, i) => (
-                    <div key={i} className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow border-l-4 border-indigo-500">
+                    <div key={i} className="bg-white p-6 rounded-xl shadow border-l-4 border-indigo-500">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{stat.label}</p>
+                                <p className="text-sm text-gray-500">{stat.label}</p>
                                 <p className="text-3xl font-bold mt-1">{stat.value}</p>
                             </div>
                             <div className="text-indigo-500 opacity-80">{stat.icon}</div>
@@ -28,7 +28,7 @@ export default function Dashboard() {
                 ))}
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow">
+            <div className="bg-white rounded-xl p-8 shadow">
                 <h2 className="text-2xl font-bold mb-6">Recent Activity</h2>
                 <p className="text-gray-500">You compared SAP vs Odoo 2 days ago</p>
                 <p className="text-gray-500 mt-2">You wrote a review for Zoho CRM last week</p>

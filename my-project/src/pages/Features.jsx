@@ -3,7 +3,7 @@ export default function Features() {
     return (
         <div className="container mx-auto px-5 py-16">
             <h1 className="text-4xl md:text-5xl font-bold text-center mb-6">Key Features of Our Platform</h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 text-center mb-16 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
                 Everything you need to make confident software decisions
             </p>
 
@@ -16,9 +16,9 @@ export default function Features() {
                     { title: "AI Recommendations", desc: "Get personalized suggestions based on your needs (coming soon)" },
                     { title: "Write & Earn", desc: "Share your experience and earn credits or rewards" },
                 ].map((f, i) => (
-                    <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition">
-                        <h3 className="text-2xl font-bold mb-4 text-indigo-600 dark:text-indigo-400">{f.title}</h3>
-                        <p className="text-gray-600 dark:text-gray-300">{f.desc}</p>
+                    <div key={i} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition">
+                        <h3 className="text-2xl font-bold mb-4 text-indigo-600">{f.title}</h3>
+                        <p className="text-gray-600">{f.desc}</p>
                     </div>
                 ))}
             </div>

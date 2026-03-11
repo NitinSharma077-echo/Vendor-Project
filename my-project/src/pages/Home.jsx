@@ -1,55 +1,87 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import {
   Users, FileText, GitCompare, BarChart3, Award, LineChart, Star,
   ArrowRight, CheckCircle, TrendingUp, ShieldCheck, Zap, Globe,
   ChevronRight, Package, Clock, DollarSign, Target, Activity
 } from 'lucide-react';
 
-/* ─── data ─────────────────────────────────────────────── */
-
 const stats = [
-  { value: '2,400+', label: 'Vendors Managed'     },
-  { value: '98%',    label: 'Quote Accuracy'       },
-  { value: '35%',    label: 'Cost Savings Avg.'    },
-  { value: '12 min', label: 'Avg. RFQ Response'    },
+  { end: 2400, format: n => n.toLocaleString() + '+', label: 'Vendors Managed'    },
+  { end: 98,   format: n => n + '%',                  label: 'Quote Accuracy'      },
+  { end: 35,   format: n => n + '%',                  label: 'Cost Savings Avg.'   },
+  { end: 12,   format: n => n + ' min',               label: 'Avg. RFQ Response'   },
 ];
+
+function CountUp({ end, format, duration = 1800 }) {
+  const [count,   setCount]   = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setStarted(true); },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!started) return;
+    const startTime = performance.now();
+    let raf;
+    const tick = now => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased    = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      setCount(Math.round(eased * end));
+      if (progress < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [started, end, duration]);
+
+  return <span ref={ref}>{format(count)}</span>;
+}
 
 const features = [
   {
     icon: Users,
     color: 'bg-indigo-100 text-indigo-600',
     title: 'Vendor Master',
-    desc:  'Centralize all vendor profiles, contacts, categories, certifications, and compliance documents in one searchable directory.',
+    desc: 'Centralize all vendor profiles, contacts, categories, certifications, and compliance documents in one searchable directory.',
   },
   {
     icon: FileText,
     color: 'bg-blue-100 text-blue-600',
     title: 'RFQ & Quote Capture',
-    desc:  'Issue RFQs to multiple vendors simultaneously. Collect, organize, and track quotations with automated follow-up reminders.',
+    desc: 'Issue RFQs to multiple vendors simultaneously. Collect, organize, and track quotations with automated follow-up reminders.',
   },
   {
     icon: GitCompare,
     color: 'bg-violet-100 text-violet-600',
     title: 'Price Comparison',
-    desc:  'Compare vendor quotes side-by-side, calculate landed cost, margins, and instantly identify the most competitive offer.',
+    desc: 'Compare vendor quotes side-by-side, calculate landed cost, margins, and instantly identify the most competitive offer.',
   },
   {
     icon: BarChart3,
     color: 'bg-emerald-100 text-emerald-600',
     title: 'Performance Tracking',
-    desc:  'Monitor KPIs — response time, order success rate, delivery reliability, and defect ratio — across every vendor automatically.',
+    desc: 'Monitor KPIs — response time, order success rate, delivery reliability, and defect ratio — across every vendor automatically.',
   },
   {
     icon: Award,
     color: 'bg-amber-100 text-amber-600',
     title: 'Vendor Scorecards',
-    desc:  'Auto-generate scorecards using weighted KPI formulas. Classify vendors as Preferred, Regular, or Monitor with zero manual effort.',
+    desc: 'Auto-generate scorecards using weighted KPI formulas. Classify vendors as Preferred, Regular, or Monitor with zero manual effort.',
   },
   {
     icon: LineChart,
     color: 'bg-rose-100 text-rose-600',
     title: 'Intelligence Analytics',
-    desc:  'Drill into spend patterns, category-wise vendor rankings, savings trends, and procurement efficiency dashboards.',
+    desc: 'Drill into spend patterns, category-wise vendor rankings, savings trends, and procurement efficiency dashboards.',
   },
 ];
 
@@ -58,73 +90,71 @@ const steps = [
     step: '01',
     icon: Package,
     title: 'Onboard Your Vendors',
-    desc:  'Import existing vendor data or add vendors manually. Assign categories, contacts, and compliance tags instantly.',
+    desc: 'Import existing vendor data or add vendors manually. Assign categories, contacts, and compliance tags instantly.',
   },
   {
     step: '02',
     icon: FileText,
     title: 'Issue RFQs & Collect Quotes',
-    desc:  'Create an RFQ in seconds, notify multiple vendors at once, and receive structured quotes directly into the system.',
+    desc: 'Create an RFQ in seconds, notify multiple vendors at once, and receive structured quotes directly into the system.',
   },
   {
     step: '03',
     icon: GitCompare,
     title: 'Compare & Select the Best',
-    desc:  'Use the side-by-side comparison engine to evaluate price, delivery, and terms — then award with one click.',
+    desc: 'Use the side-by-side comparison engine to evaluate price, delivery, and terms — then award with one click.',
   },
   {
     step: '04',
     icon: Award,
     title: 'Track & Score Automatically',
-    desc:  'Every order feeds back into vendor KPIs. Scorecards update in real-time so your preferred vendor list is always accurate.',
+    desc: 'Every order feeds back into vendor KPIs. Scorecards update in real-time so your preferred vendor list is always accurate.',
   },
 ];
 
 const benefits = [
-  { icon: DollarSign, text: 'Reduce procurement costs by up to 35%'         },
-  { icon: Clock,      text: 'Cut quote processing time from days to minutes'  },
-  { icon: ShieldCheck,text: 'Ensure compliance with automated vendor checks'  },
-  { icon: Target,     text: 'Always source from your best-performing vendors' },
-  { icon: Activity,   text: 'Real-time KPI dashboards — no manual reporting'  },
-  { icon: Zap,        text: 'Automated reminders and scoring — zero effort'   },
+  { icon: DollarSign, text: 'Reduce procurement costs by up to 35%' },
+  { icon: Clock, text: 'Cut quote processing time from days to minutes' },
+  { icon: ShieldCheck, text: 'Ensure compliance with automated vendor checks' },
+  { icon: Target, text: 'Always source from your best-performing vendors' },
+  { icon: Activity, text: 'Real-time KPI dashboards — no manual reporting' },
+  { icon: Zap, text: 'Automated reminders and scoring — zero effort' },
 ];
 
 const categories = [
-  { label: 'Raw Materials',   count: '340+ vendors' },
-  { label: 'IT & Software',   count: '210+ vendors' },
-  { label: 'Logistics',       count: '180+ vendors' },
-  { label: 'Manufacturing',   count: '290+ vendors' },
-  { label: 'MRO Supplies',    count: '150+ vendors' },
+  { label: 'Raw Materials', count: '340+ vendors' },
+  { label: 'IT & Software', count: '210+ vendors' },
+  { label: 'Logistics', count: '180+ vendors' },
+  { label: 'Manufacturing', count: '290+ vendors' },
+  { label: 'MRO Supplies', count: '150+ vendors' },
   { label: 'Professional Svcs', count: '120+ vendors' },
-  { label: 'Packaging',       count: '95+ vendors'  },
-  { label: 'Utilities',       count: '60+ vendors'  },
+  { label: 'Packaging', count: '95+ vendors' },
+  { label: 'Utilities', count: '60+ vendors' },
 ];
 
 const testimonials = [
   {
-    name:    'Sarah Mitchell',
-    role:    'Head of Procurement, NovaTech Industries',
-    avatar:  'SM',
-    color:   'bg-indigo-500',
-    quote:   'We reduced our vendor evaluation cycle from 3 weeks to 2 days. The scorecard automation alone saved our team 20+ hours per month.',
+    name: 'Sarah Mitchell',
+    role: 'Head of Procurement, NovaTech Industries',
+    avatar: 'SM',
+    color: 'bg-indigo-500',
+    quote: 'We reduced our vendor evaluation cycle from 3 weeks to 2 days. The scorecard automation alone saved our team 20+ hours per month.',
   },
   {
-    name:    'Rajiv Menon',
-    role:    'Supply Chain Director, Apex Manufacturing',
-    avatar:  'RM',
-    color:   'bg-violet-500',
-    quote:   'The price comparison module is a game changer. We identified a 28% cost saving on our top 5 categories in the first quarter.',
+    name: 'Rajiv Menon',
+    role: 'Supply Chain Director, Apex Manufacturing',
+    avatar: 'RM',
+    color: 'bg-violet-500',
+    quote: 'The price comparison module is a game changer. We identified a 28% cost saving on our top 5 categories in the first quarter.',
   },
   {
-    name:    'Linda Hartmann',
-    role:    'CPO, GlobalBridge Logistics',
-    avatar:  'LH',
-    color:   'bg-emerald-500',
-    quote:   'Finally, a system that gives us full visibility into vendor performance. Our preferred vendor compliance went from 60% to 94%.',
+    name: 'Linda Hartmann',
+    role: 'CPO, GlobalBridge Logistics',
+    avatar: 'LH',
+    color: 'bg-emerald-500',
+    quote: 'Finally, a system that gives us full visibility into vendor performance. Our preferred vendor compliance went from 60% to 94%.',
   },
 ];
-
-/* ─── component ─────────────────────────────────────────── */
 
 export default function Home() {
   return (
@@ -204,8 +234,8 @@ export default function Home() {
               <div className="grid grid-cols-3 gap-3">
                 {[
                   { label: 'Active Vendors', val: '128', color: 'text-indigo-600', bg: 'bg-indigo-50' },
-                  { label: 'Open RFQs',      val: '34',  color: 'text-amber-600',  bg: 'bg-amber-50'  },
-                  { label: 'Avg. Score',     val: '79',  color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                  { label: 'Open RFQs', val: '34', color: 'text-amber-600', bg: 'bg-amber-50' },
+                  { label: 'Avg. Score', val: '79', color: 'text-emerald-600', bg: 'bg-emerald-50' },
                 ].map(c => (
                   <div key={c.label} className={`${c.bg} rounded-2xl p-4 text-center`}>
                     <p className={`text-2xl font-extrabold ${c.color}`}>{c.val}</p>
@@ -217,9 +247,9 @@ export default function Home() {
               {/* vendor list */}
               <div className="space-y-2 pt-1">
                 {[
-                  { name: 'AlphaTech Supplies',  score: 94, tag: 'Preferred', bar: 'bg-emerald-400', tagCls: 'bg-emerald-100 text-emerald-700' },
-                  { name: 'BlueOcean Materials', score: 78, tag: 'Regular',   bar: 'bg-amber-400',   tagCls: 'bg-amber-100 text-amber-700'   },
-                  { name: 'CheapBulk Co.',       score: 42, tag: 'Monitor',   bar: 'bg-rose-400',    tagCls: 'bg-rose-100 text-rose-700'     },
+                  { name: 'AlphaTech Supplies', score: 94, tag: 'Preferred', bar: 'bg-emerald-400', tagCls: 'bg-emerald-100 text-emerald-700' },
+                  { name: 'BlueOcean Materials', score: 78, tag: 'Regular', bar: 'bg-amber-400', tagCls: 'bg-amber-100 text-amber-700' },
+                  { name: 'CheapBulk Co.', score: 42, tag: 'Monitor', bar: 'bg-rose-400', tagCls: 'bg-rose-100 text-rose-700' },
                 ].map(v => (
                   <div key={v.name} className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3">
                     <div className="flex-1 min-w-0">
@@ -266,13 +296,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── STATS BAR ─────────────────────────────────────── */}
       <section className="bg-indigo-600 py-12">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map(s => (
               <div key={s.label} className="text-center">
-                <p className="text-3xl md:text-4xl font-extrabold text-white">{s.value}</p>
+                <p className="text-3xl md:text-4xl font-extrabold text-white">
+                  <CountUp end={s.end} format={s.format} />
+                </p>
                 <p className="text-sm text-indigo-200 mt-1 font-medium">{s.label}</p>
               </div>
             ))}
@@ -280,7 +311,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FEATURES GRID ─────────────────────────────────── */}
       <section className="bg-white py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -377,10 +407,10 @@ export default function Home() {
             <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 shadow-inner">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Sample Scorecard</p>
               {[
-                { name: 'AlphaTech Supplies',  score: 94, tag: 'Preferred', color: 'bg-emerald-500', bar: 'bg-emerald-400', pct: '94%' },
-                { name: 'BlueOcean Materials', score: 78, tag: 'Regular',   color: 'bg-amber-500',   bar: 'bg-amber-400',   pct: '78%' },
-                { name: 'FastTrack Logistics', score: 81, tag: 'Regular',   color: 'bg-amber-500',   bar: 'bg-amber-400',   pct: '81%' },
-                { name: 'CheapBulk Co.',       score: 42, tag: 'Monitor',   color: 'bg-rose-500',    bar: 'bg-rose-400',    pct: '42%' },
+                { name: 'AlphaTech Supplies', score: 94, tag: 'Preferred', color: 'bg-emerald-500', bar: 'bg-emerald-400', pct: '94%' },
+                { name: 'BlueOcean Materials', score: 78, tag: 'Regular', color: 'bg-amber-500', bar: 'bg-amber-400', pct: '78%' },
+                { name: 'FastTrack Logistics', score: 81, tag: 'Regular', color: 'bg-amber-500', bar: 'bg-amber-400', pct: '81%' },
+                { name: 'CheapBulk Co.', score: 42, tag: 'Monitor', color: 'bg-rose-500', bar: 'bg-rose-400', pct: '42%' },
               ].map(v => (
                 <div key={v.name} className="bg-white rounded-xl p-4 mb-3 shadow-sm flex items-center gap-4">
                   <div className={`w-9 h-9 rounded-full ${v.color} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
@@ -410,12 +440,12 @@ export default function Home() {
             {/* mock analytics visual */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: 'Total Spend YTD',   value: '₹4.2 Cr',  icon: DollarSign, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-                { label: 'Active Vendors',     value: '128',       icon: Users,      color: 'text-emerald-600', bg: 'bg-emerald-50' },
-                { label: 'Open RFQs',          value: '34',        icon: FileText,   color: 'text-amber-600', bg: 'bg-amber-50' },
-                { label: 'Savings This Month', value: '₹18.4 L',  icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50' },
-                { label: 'Preferred Vendors',  value: '47',        icon: Star,       color: 'text-rose-600', bg: 'bg-rose-50' },
-                { label: 'Avg. Score',         value: '79 / 100',  icon: Award,      color: 'text-blue-600', bg: 'bg-blue-50' },
+                { label: 'Total Spend YTD', value: '₹4.2 Cr', icon: DollarSign, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+                { label: 'Active Vendors', value: '128', icon: Users, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                { label: 'Open RFQs', value: '34', icon: FileText, color: 'text-amber-600', bg: 'bg-amber-50' },
+                { label: 'Savings This Month', value: '₹18.4 L', icon: TrendingUp, color: 'text-violet-600', bg: 'bg-violet-50' },
+                { label: 'Preferred Vendors', value: '47', icon: Star, color: 'text-rose-600', bg: 'bg-rose-50' },
+                { label: 'Avg. Score', value: '79 / 100', icon: Award, color: 'text-blue-600', bg: 'bg-blue-50' },
               ].map(card => (
                 <div key={card.label} className="bg-white rounded-2xl p-5 shadow-sm border border-white">
                   <div className={`w-9 h-9 rounded-lg ${card.bg} flex items-center justify-center mb-3`}>
@@ -567,7 +597,7 @@ export default function Home() {
               <p className="text-sm leading-relaxed">Vendor Management & Intelligence Platform for modern procurement teams.</p>
             </div>
             {[
-              { heading: 'Product',  links: ['Features', 'Dashboard', 'Vendors', 'Analytics'] },
+              { heading: 'Product', links: ['Features', 'Dashboard', 'Vendors', 'Analytics'] },
               { heading: 'Company', links: ['About', 'Blog', 'Careers', 'Press'] },
               { heading: 'Support', links: ['Documentation', 'API Reference', 'Contact', 'Status'] },
             ].map(col => (

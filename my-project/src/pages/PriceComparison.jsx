@@ -10,43 +10,43 @@ const comparisonRows = [
         category: 'Pricing',
         rows: [
             { criterion: 'Unit Price (per 100 units)', a: '₹4,200', b: '₹5,100', winner: 'a' },
-            { criterion: 'Bulk Discount (500+ units)', a: '8%',     b: '5%',     winner: 'a' },
-            { criterion: 'Payment Terms',              a: 'Net 30', b: 'Net 15', winner: 'a' },
-            { criterion: 'Freight / Delivery Cost',    a: '₹350',   b: 'Free',   winner: 'b' },
+            { criterion: 'Bulk Discount (500+ units)', a: '8%', b: '5%', winner: 'a' },
+            { criterion: 'Payment Terms', a: 'Net 30', b: 'Net 15', winner: 'a' },
+            { criterion: 'Freight / Delivery Cost', a: '₹350', b: 'Free', winner: 'b' },
         ],
     },
     {
         category: 'Delivery',
         rows: [
-            { criterion: 'Lead Time',                  a: '5 days',  b: '3 days',  winner: 'b' },
-            { criterion: 'On-Time Delivery Rate',      a: '96%',     b: '88%',     winner: 'a' },
-            { criterion: 'Delivery Coverage',          a: 'Pan India', b: 'Regional', winner: 'a' },
+            { criterion: 'Lead Time', a: '5 days', b: '3 days', winner: 'b' },
+            { criterion: 'On-Time Delivery Rate', a: '96%', b: '88%', winner: 'a' },
+            { criterion: 'Delivery Coverage', a: 'Pan India', b: 'Regional', winner: 'a' },
         ],
     },
     {
         category: 'Quality & Compliance',
         rows: [
-            { criterion: 'ISO Certified',              a: true,      b: false,     winner: 'a' },
-            { criterion: 'Defect / Return Rate',       a: '0.8%',    b: '2.1%',    winner: 'a' },
-            { criterion: 'Quality Warranty',           a: '12 months', b: '6 months', winner: 'a' },
-            { criterion: 'MSDS / Safety Docs',         a: true,      b: true,      winner: null },
+            { criterion: 'ISO Certified', a: true, b: false, winner: 'a' },
+            { criterion: 'Defect / Return Rate', a: '0.8%', b: '2.1%', winner: 'a' },
+            { criterion: 'Quality Warranty', a: '12 months', b: '6 months', winner: 'a' },
+            { criterion: 'MSDS / Safety Docs', a: true, b: true, winner: null },
         ],
     },
     {
         category: 'Service',
         rows: [
-            { criterion: 'Avg. RFQ Response Time',     a: '4 hrs',   b: '24 hrs',  winner: 'a' },
-            { criterion: 'Dedicated Account Manager',  a: true,      b: false,     winner: 'a' },
-            { criterion: 'After-Sales Support',        a: '24 / 7',  b: 'Business hours', winner: 'a' },
-            { criterion: 'Order Tracking Portal',      a: true,      b: false,     winner: 'a' },
+            { criterion: 'Avg. RFQ Response Time', a: '4 hrs', b: '24 hrs', winner: 'a' },
+            { criterion: 'Dedicated Account Manager', a: true, b: false, winner: 'a' },
+            { criterion: 'After-Sales Support', a: '24 / 7', b: 'Business hours', winner: 'a' },
+            { criterion: 'Order Tracking Portal', a: true, b: false, winner: 'a' },
         ],
     },
     {
         category: 'Performance Score',
         rows: [
-            { criterion: 'Overall Vendor Score',       a: '94 / 100', b: '78 / 100', winner: 'a' },
-            { criterion: 'Classification',             a: 'Preferred', b: 'Regular',  winner: 'a' },
-            { criterion: 'Repeat Order Rate',          a: '87%',       b: '62%',      winner: 'a' },
+            { criterion: 'Overall Vendor Score', a: '94 / 100', b: '78 / 100', winner: 'a' },
+            { criterion: 'Classification', a: 'Preferred', b: 'Regular', winner: 'a' },
+            { criterion: 'Repeat Order Rate', a: '87%', b: '62%', winner: 'a' },
         ],
     },
 ];
@@ -55,7 +55,7 @@ function CellValue({ val, isWinner }) {
     if (typeof val === 'boolean') {
         return val
             ? <CheckCircle size={18} className="mx-auto text-emerald-500" />
-            : <XCircle    size={18} className="mx-auto text-rose-400"    />;
+            : <XCircle size={18} className="mx-auto text-rose-400" />;
     }
     return (
         <span className={`font-medium ${isWinner ? 'text-indigo-700' : 'text-gray-700'}`}>{val}</span>
@@ -223,3 +223,4 @@ export default function PriceComparison() {
         </div>
     );
 }
+
